@@ -1,21 +1,19 @@
 const http = require("http");
+const { handleReqRes } = require("./helpers/handleReqRes");
+const environments = require("./helpers/environments");
 
-const app = {};
+class App {
+  config = { PORT: 3000 };
 
-app.config = {
-  PORT: 3000,
-};
+  createServer() {
+    const server = http.createServer(handleReqRes);
+    server.listen(environments.port, () => {
+      console.log(
+        `${environments.envName}:- listening to port http://localhost:${environments.port}`
+      );
+    });
+  }
+}
 
-app.createServer = function () {
-  const server = http.createServer(this.handleReqRes);
-
-  server.listen(this.config.PORT, () => {
-    console.log(`listening to port http://localhost:${this.config.PORT}`);
-  });
-};
-
-app.handleReqRes = (req, res) => {
-  res.end("hello world");
-};
-
+const app = new App();
 app.createServer();

@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-    ,"start": "npx nodemon index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "SET NODE_ENV=staging && npx nodemon index.js",
+    "production": "SET NODE_ENV=production && node index.js"
   },
   "author": "",
   "license": "ISC",
