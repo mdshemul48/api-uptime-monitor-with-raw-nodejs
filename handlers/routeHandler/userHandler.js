@@ -1,4 +1,4 @@
-const { hash } = require("../../helpers/utilities");
+const { hash, parseJson } = require("../../helpers/utilities");
 const data = require("../../lib/data");
 
 const handler = {};
@@ -80,7 +80,32 @@ handler._users.post = function (requestProperties, callback) {
   }
 };
 
-handler._users.get = function (requestProperties, callback) {};
+handler._users.get = function (requestProperties, callback) {
+  const phone =
+    typeof requestProperties.queryStringObject.phone === "string" &&
+    requestProperties.queryStringObject.phone.trim().length == 11
+      ? requestProperties.queryStringObject.phone
+      : false;
+
+  if (phone) {
+    // lookup the user
+    data.read("users", phone, (err, userData) => {
+      const user = { ...parseJson(userData) };
+      if (!err && user) {
+        delete user.password;
+        callback(200, user);
+      } else {
+        callback(404, {
+          message: "Requested user was not found.",
+        });
+      }
+    });
+  } else {
+    callback(404, {
+      message: "Requested user was not found.",
+    });
+  }
+};
 
 handler._users.put = function (requestProperties, callback) {};
 
