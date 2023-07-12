@@ -43,6 +43,8 @@ class handler {
         payload = typeof payload === "object" ? payload : {};
 
         const payloadString = JSON.stringify(payload);
+
+        res.setHeader("Content-Type", "application/json");
         res.writeHead(statusCode);
         res.end(payloadString);
       });
