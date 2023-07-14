@@ -177,6 +177,30 @@ handler._users.put = function (requestProperties, callback) {
   }
 };
 
-handler._users.delete = function (requestProperties, callback) {};
+handler._users.delete = function (requestProperties, callback) {
+  const phone =
+    typeof requestProperties.queryStringObject.phone === "string" &&
+    requestProperties.queryStringObject.phone.trim().length == 11
+      ? requestProperties.queryStringObject.phone
+      : false;
+
+  if (phone) {
+    data.read("users", phone, (err, userData) => {
+      if (!err && userData) {
+        data.delete("users", phone, (err) => {
+          if (!err) {
+            callback(200, { message: "User Deleted successfully." });
+          } else {
+            callback(500, { message: "Something went wrong with server." });
+          }
+        });
+      }
+    });
+  } else {
+    callback(404, {
+      message: "User info not provided.",
+    });
+  }
+};
 
 module.exports = handler;
