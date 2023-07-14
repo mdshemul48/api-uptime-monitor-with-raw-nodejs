@@ -107,7 +107,75 @@ handler._users.get = function (requestProperties, callback) {
   }
 };
 
-handler._users.put = function (requestProperties, callback) {};
+handler._users.put = function (requestProperties, callback) {
+  const phone =
+    typeof requestProperties.body.phone === "string" &&
+    requestProperties.body.phone.trim().length == 11
+      ? requestProperties.body.phone
+      : false;
+
+  const firstName =
+    typeof requestProperties.body.firstName === "string" &&
+    requestProperties.body.firstName.trim().length > 0
+      ? requestProperties.body.firstName
+      : false;
+
+  const lastName =
+    typeof requestProperties.body.lastName === "string" &&
+    requestProperties.body.lastName.trim().length > 0
+      ? requestProperties.body.lastName
+      : false;
+
+  const password =
+    typeof requestProperties.body.password === "string" &&
+    requestProperties.body.password.trim().length > 0
+      ? requestProperties.body.password
+      : false;
+
+  if (phone) {
+    if (firstName || lastName || password) {
+      data.read("users", phone, (err, userStringData) => {
+        const userData = { ...parseJson(userStringData) };
+        if (!err && userData) {
+          if (firstName) {
+            userData.firstName = firstName;
+          }
+
+          if (lastName) {
+            userData.lastName = lastName;
+          }
+
+          if (password) {
+            userData.password = hash(password);
+          }
+          data.update("users", phone, userData, (err) => {
+            if (!err) {
+              callback(200, {
+                message: "User has been updated.",
+              });
+            } else {
+              callback(500, {
+                message: "User not updated. Server Error.",
+              });
+            }
+          });
+        } else {
+          callback(404, {
+            message: "User not found.",
+          });
+        }
+      });
+    } else {
+      callback(400, {
+        message: "You have problem in your request.",
+      });
+    }
+  } else {
+    callback(400, {
+      message: "invalid phone number.",
+    });
+  }
+};
 
 handler._users.delete = function (requestProperties, callback) {};
 
