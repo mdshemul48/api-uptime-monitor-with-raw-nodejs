@@ -41,6 +41,7 @@ handler._users.post = function (requestProperties, callback) {
     requestProperties.body.password.trim().length > 0
       ? requestProperties.body.password
       : false;
+
   const tosAgreement =
     typeof requestProperties.body.tosAgreement === "boolean"
       ? requestProperties.body.tosAgreement
